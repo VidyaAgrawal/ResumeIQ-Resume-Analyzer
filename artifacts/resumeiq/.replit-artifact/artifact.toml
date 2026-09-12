@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "ResumeIQ"
+description = "A production-ready AI resume analyzer that extracts PDF content, evaluates it against a selected role, presents structured improvement guidance, and sends the verified report by email."
+version = "1.0.0"
+id = "artifacts/resumeiq"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23448
+
+[services.development]
+run = "pnpm --filter @workspace/resumeiq run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/resumeiq", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/resumeiq/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23448"
+BASE_PATH = "/"

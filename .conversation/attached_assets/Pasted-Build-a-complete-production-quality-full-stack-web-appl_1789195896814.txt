@@ -1,0 +1,429 @@
+Build a complete, production-quality full-stack web application called "ResumeIQ – AI Resume Analyzer".
+
+GOAL:
+Create an AI-powered Resume Analyzer where users can upload their resume as a PDF, select the job role they are applying for, enter their email address, and receive an AI-generated resume analysis both on the website and via email.
+
+The application must be fully functional. Do NOT build a static demo or use hardcoded/mock analysis results.
+
+--------------------------------------------------
+1. RESUME UPLOAD
+--------------------------------------------------
+
+Create a modern drag-and-drop PDF upload interface.
+
+Requirements:
+- Accept PDF files only.
+- Show selected filename and file size.
+- Allow users to remove/change the uploaded file.
+- Validate file type and reasonable file size.
+- Extract the actual text/content from the uploaded PDF.
+- Handle multi-page resumes.
+- If the PDF is scanned/image-based, use an appropriate method to extract readable content when possible.
+- Show a clear error if the resume cannot be read.
+
+--------------------------------------------------
+2. JOB ROLE SELECTION
+--------------------------------------------------
+
+Add a job-role dropdown containing:
+
+- Backend Developer
+- Frontend Developer
+- Full Stack Developer
+- Java Developer
+- Node.js Developer
+- Python Developer
+- Software Engineer
+- Data Analyst
+- HR / Human Resources
+- Other
+
+If "Other" is selected:
+- Display a text input for the custom job role.
+
+Also provide an option:
+"No specific role"
+
+If no role is selected, evaluate the resume using general resume and ATS best practices.
+
+--------------------------------------------------
+3. EMAIL INPUT
+--------------------------------------------------
+
+Add an email address input field.
+
+The user will enter the email address where the detailed resume analysis report should be sent.
+
+Validate the email address before starting the analysis.
+
+--------------------------------------------------
+4. AI RESUME ANALYSIS
+--------------------------------------------------
+
+Use a real LLM API, preferably Google Gemini.
+
+Do NOT use fake or hardcoded scores or feedback.
+
+Send the extracted resume content and selected job role to Gemini.
+
+Ask Gemini to analyze:
+
+- Overall resume score out of 100
+- ATS compatibility
+- Resume strengths
+- Missing skills
+- Missing sections
+- Weak content
+- Formatting concerns
+- Keyword optimization
+- Role-specific skill matching
+- Experience/project quality
+- Education section
+- Technical skills
+- Actionable improvement suggestions
+- Final recommendation
+
+The AI should distinguish between:
+- Information actually present in the resume
+- Information that is missing
+- Suggestions for improvement
+
+Do not invent experience, education, skills, projects, companies, or achievements.
+
+If a job role is selected, evaluate the resume specifically against that role.
+
+--------------------------------------------------
+5. STRUCTURED AI OUTPUT
+--------------------------------------------------
+
+Require Gemini to return structured JSON.
+
+Use a structure similar to:
+
+{
+  "score": 82,
+  "atsScore": 78,
+  "role": "Backend Developer",
+  "summary": "...",
+  "strengths": [
+    "...",
+    "..."
+  ],
+  "missingSkills": [
+    "...",
+    "..."
+  ],
+  "missingSections": [
+    "...",
+    "..."
+  ],
+  "keywordSuggestions": [
+    "...",
+    "..."
+  ],
+  "improvements": [
+    "...",
+    "..."
+  ],
+  "finalRecommendation": "...",
+  "roleMatch": "Good"
+}
+
+Validate the AI response before displaying it.
+
+If the AI returns invalid JSON, handle the error gracefully rather than crashing the application.
+
+--------------------------------------------------
+6. PROCESSING EXPERIENCE
+--------------------------------------------------
+
+After the user clicks "Analyze Resume":
+
+Show a professional loading/progress interface.
+
+Display messages such as:
+
+"Uploading resume..."
+"Extracting resume content..."
+"Analyzing your resume..."
+"Checking ATS compatibility..."
+"Comparing skills with the selected role..."
+"Generating your personalized report..."
+
+Do not show fake progress that claims a step is complete when it has not actually completed.
+
+Disable the Analyze button while processing.
+
+--------------------------------------------------
+7. RESULTS DASHBOARD
+--------------------------------------------------
+
+After successful analysis, display a beautiful results dashboard.
+
+Show:
+
+- Overall Resume Score /100
+- ATS Score /100
+- Selected Job Role
+- Role Match
+- AI Summary
+
+Use visually appealing score cards or circular progress indicators.
+
+Then display sections for:
+
+1. Strengths
+2. Missing Skills
+3. Missing Sections
+4. ATS & Keyword Suggestions
+5. Resume Improvements
+6. Final Recommendation
+
+Use icons, cards, badges, progress indicators, and clean spacing.
+
+--------------------------------------------------
+8. EMAIL REPORT
+--------------------------------------------------
+
+Generate a professional email report containing:
+
+- Resume score
+- ATS score
+- Selected job role
+- Summary
+- Strengths
+- Missing skills
+- Missing sections
+- Keyword suggestions
+- Improvement suggestions
+- Final recommendation
+
+Send the report to the email address entered by the user.
+
+Use real Gmail/email delivery.
+
+IMPORTANT:
+- Do not claim the email was sent unless the email service actually confirms successful delivery.
+- If email sending fails, show an appropriate error message.
+- The resume analysis should still be visible on the website even if email delivery fails.
+
+After successful email delivery, show:
+
+"📩 Your detailed resume report has been sent to your email successfully."
+
+--------------------------------------------------
+9. GMAIL CONFIGURATION
+--------------------------------------------------
+
+Implement email sending securely.
+
+Do not put Gmail credentials in frontend code.
+
+Use Replit Secrets/environment variables for all sensitive credentials.
+
+Clearly document the required Gmail configuration and environment variables.
+
+Do not expose:
+- API keys
+- OAuth credentials
+- passwords
+- tokens
+
+in the frontend or GitHub repository.
+
+--------------------------------------------------
+10. SECURITY & PRIVACY
+--------------------------------------------------
+
+Resume files may contain personal information.
+
+Therefore:
+
+- Do not permanently store resumes unless necessary.
+- Do not log resume contents unnecessarily.
+- Do not expose uploaded files publicly.
+- Keep API keys and email credentials server-side.
+- Validate uploaded files.
+- Validate user input.
+- Never commit secrets to GitHub.
+
+--------------------------------------------------
+11. UI/UX DESIGN
+--------------------------------------------------
+
+Create a premium, modern SaaS-style interface.
+
+Application name:
+
+"ResumeIQ"
+
+Tagline:
+
+"AI-powered resume analysis for your next opportunity."
+
+Design requirements:
+
+- Modern professional interface
+- Responsive desktop and mobile design
+- Clean typography
+- Beautiful cards
+- Smooth animations
+- Attractive upload area
+- Professional score visualization
+- Clear section hierarchy
+- Good accessibility
+- Loading animations
+- Success/error notifications
+- Hover effects and subtle micro-interactions
+
+Use a professional blue/purple/neutral color palette suitable for a career/AI product.
+
+Do not make the interface look like a basic form.
+
+--------------------------------------------------
+12. USER FLOW
+--------------------------------------------------
+
+The complete user flow should be:
+
+Upload Resume PDF
+        ↓
+Select Job Role
+        ↓
+Enter Email
+        ↓
+Click "Analyze Resume"
+        ↓
+Extract PDF Content
+        ↓
+Send Content + Role to Gemini
+        ↓
+Receive Structured AI Analysis
+        ↓
+Display Score + Detailed Results
+        ↓
+Generate Email Report
+        ↓
+Send Report via Gmail
+        ↓
+Show Email Success Message
+
+--------------------------------------------------
+13. ERROR HANDLING
+--------------------------------------------------
+
+Handle:
+
+- No file selected
+- Invalid file type
+- Large file
+- Corrupted PDF
+- Empty resume
+- PDF extraction failure
+- Gemini API failure
+- Invalid AI response
+- Gmail/email failure
+- Invalid email address
+- Network errors
+
+Show clear and user-friendly error messages.
+
+Do not expose raw API errors, credentials, stack traces, or sensitive information to the user.
+
+--------------------------------------------------
+14. TECHNOLOGY
+--------------------------------------------------
+
+Use a modern full-stack architecture.
+
+Preferred stack:
+
+Frontend:
+- React
+- TypeScript
+- Modern CSS / Tailwind CSS
+
+Backend:
+- Node.js
+- Express or the appropriate Replit backend architecture
+
+AI:
+- Google Gemini API
+
+PDF:
+- A reliable PDF text extraction library
+
+Email:
+- Gmail or a reliable Gmail-compatible email service
+
+Use reusable components and keep frontend/backend responsibilities separate.
+
+--------------------------------------------------
+15. DATABASE
+--------------------------------------------------
+
+A database is NOT required for the first version.
+
+Do not add unnecessary database complexity.
+
+Focus on making the core workflow fully functional:
+
+PDF → Extraction → Gemini → Results → Email
+
+--------------------------------------------------
+16. IMPORTANT: NO MOCK IMPLEMENTATION
+--------------------------------------------------
+
+This is critical.
+
+Do NOT:
+
+- Use hardcoded resume scores
+- Use fake AI responses
+- Use fake email delivery
+- Display "email sent" without actually sending it
+- Create a frontend-only prototype
+- Pretend that an API call succeeded
+
+The application must perform the actual operations.
+
+If an external API or credential is required, clearly tell me what needs to be configured in Replit Secrets.
+
+--------------------------------------------------
+17. PROJECT DOCUMENTATION
+--------------------------------------------------
+
+After building the application, provide:
+
+1. Complete project structure
+2. Required dependencies
+3. Installation/setup instructions
+4. Required Replit Secrets/environment variables
+5. Gemini API setup instructions
+6. Gmail/email setup instructions
+7. How to run the application
+8. How to test the complete workflow
+9. Explanation of the architecture
+10. Troubleshooting instructions
+
+Also create a README.md containing the above information.
+
+--------------------------------------------------
+FINAL REQUIREMENT
+--------------------------------------------------
+
+Build and test the application.
+
+Before considering the task complete, verify that:
+
+PDF upload works
+→ PDF text extraction works
+→ Gemini analysis works
+→ Structured results appear
+→ Resume score appears
+→ Role-specific analysis works
+→ Email report generation works
+→ Email is actually sent successfully
+→ Error handling works
+
+The final application should be portfolio-quality, functional, responsive, secure, and easy for a beginner developer to understand and maintain.
