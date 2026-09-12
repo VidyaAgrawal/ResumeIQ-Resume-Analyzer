@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: resume
+    description: Resume analysis operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /resume/analyze:
+    post:
+      operationId: analyzeResume
+      tags: [resume]
+      summary: Analyze a resume PDF
+      description: Extracts a resume PDF, evaluates it with Gemini, and sends the resulting report to the requested email address.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/ResumeAnalysisInput"
+      responses:
+        "200":
+          description: Structured resume analysis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResumeAnalysis"
+        "400":
+          description: Invalid input or unreadable PDF
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "502":
+          description: AI analysis or email delivery failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +66,87 @@ components:
           type: string
       required:
         - status
+    ResumeAnalysisInput:
+      type: object
+      required:
+        - resume
+        - email
+      properties:
+        resume:
+          type: string
+          format: binary
+          description: PDF resume, up to 8 MB
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          description: Selected job role or an empty string for general analysis
+        customRole:
+          type: string
+          description: Custom role when role is Other
+    ResumeAnalysis:
+      type: object
+      required:
+        - score
+        - atsScore
+        - role
+        - summary
+        - strengths
+        - missingSkills
+        - missingSections
+        - keywordSuggestions
+        - improvements
+        - finalRecommendation
+        - roleMatch
+        - emailStatus
+      properties:
+        score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        atsScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+        role:
+          type: string
+        summary:
+          type: string
+        strengths:
+          type: array
+          items:
+            type: string
+        missingSkills:
+          type: array
+          items:
+            type: string
+        missingSections:
+          type: array
+          items:
+            type: string
+        keywordSuggestions:
+          type: array
+          items:
+            type: string
+        improvements:
+          type: array
+          items:
+            type: string
+        finalRecommendation:
+          type: string
+        roleMatch:
+          type: string
+        emailStatus:
+          type: string
+          enum: [sent, failed]
+        emailError:
+          type: ["string", "null"]
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
 

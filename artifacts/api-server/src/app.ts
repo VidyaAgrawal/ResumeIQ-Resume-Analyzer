@@ -31,4 +31,21 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
 
+app.use((error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  const errorCode =
+    error && typeof error === "object" && "code" in error
+      ? String((error as { code?: unknown }).code)
+      : "";
+  if (errorCode === "LIMIT_FILE_SIZE") {
+    res.status(400).json({ error: "That PDF is too large. Please upload a file under 8 MB." });
+    return;
+  }
+  if (error instanceof Error && error.message === "Only PDF files are accepted") {
+    res.status(400).json({ error: "Only PDF files are accepted." });
+    return;
+  }
+  logger.error({ error: error instanceof Error ? error.message : "Unknown error" }, "Unhandled API error");
+  res.status(500).json({ error: "Something went wrong. Please try again." });
+});
+
 export default app;

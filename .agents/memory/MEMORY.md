@@ -1,0 +1,1 @@
+- [Node PDF parsing](pdf-parsing-node.md) — choose a Node-safe parser entrypoint; package roots can trigger browser globals or debug harness side effects.

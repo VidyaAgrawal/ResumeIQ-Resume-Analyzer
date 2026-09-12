@@ -5,27 +5,7 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-export interface HealthStatus {
-  status: string;
-}
-
-export interface ResumeAnalysisInput {
-  /** PDF resume, up to 8 MB */
-  resume: Blob;
-  email: string;
-  /** Selected job role or an empty string for general analysis */
-  role?: string;
-  /** Custom role when role is Other */
-  customRole?: string;
-}
-
-export type ResumeAnalysisEmailStatus = typeof ResumeAnalysisEmailStatus[keyof typeof ResumeAnalysisEmailStatus];
-
-
-export const ResumeAnalysisEmailStatus = {
-  sent: 'sent',
-  failed: 'failed',
-} as const;
+import type { ResumeAnalysisEmailStatus } from './resumeAnalysisEmailStatus';
 
 export interface ResumeAnalysis {
   /**
@@ -51,8 +31,3 @@ export interface ResumeAnalysis {
   /** @nullable */
   emailError?: string | null;
 }
-
-export interface ErrorResponse {
-  error: string;
-}
-

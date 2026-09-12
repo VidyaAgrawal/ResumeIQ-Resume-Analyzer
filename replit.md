@@ -1,15 +1,16 @@
-# [Project name]
+# ResumeIQ
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+ResumeIQ analyzes a user's resume PDF against a target role with Gemini and delivers a validated report on screen and by email.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the API server
+- `pnpm --filter @workspace/resumeiq run dev` — run the ResumeIQ frontend
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- Required secret: `GEMINI_API_KEY`
+- Required integration: authorized Gmail connector
 
 ## Stack
 
@@ -22,23 +23,33 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/resumeiq/src/pages/home.tsx` — upload form, processing state, and results dashboard
+- `artifacts/api-server/src/lib/resume-analysis.ts` — PDF extraction, Gemini prompt/validation, and Gmail report delivery
+- `artifacts/api-server/src/routes/resume.ts` — multipart upload validation and analysis endpoint
+- `lib/api-spec/openapi.yaml` — API source of truth
+- `README.md` — setup, testing, architecture, and troubleshooting
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Resume bytes stay in memory for one request; the first version does not persist resume files or create a database record.
+- PDF extraction runs server-side and falls back to inline PDF input for small scanned/image-based files when selectable text is unavailable.
+- Gemini output is required to be JSON and is validated before it reaches the UI or email.
+- Gmail delivery is best-effort after analysis; the website still returns the report if email sending fails.
+- All third-party credentials remain server-side through Replit Secrets and the Gmail connector.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+Users upload a resume PDF, choose one of the supported roles or a custom role, enter an email address, and receive overall/ATS scores plus strengths, gaps, keyword suggestions, improvements, and a final recommendation.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Keep the first version functional and understandable without adding database complexity.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Regenerate API client/Zod output after changing the OpenAPI spec.
+- The API server uses the Gmail connector; do not add credentials to frontend code or logs.
+- PDF parsing must use the Node-safe `pdf-parse/lib/pdf-parse.js` entrypoint because the package root's debug harness is not safe to bundle.
 
 ## Pointers
 
