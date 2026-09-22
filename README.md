@@ -23,7 +23,7 @@ lib/
 - React, TypeScript, Vite, Tailwind CSS
 - Express 5 and Multer for the API and in-memory PDF uploads
 - `pdf-parse` for multi-page text extraction
-- Gemini 2.5 Flash through the Google Gemini REST API
+- Gemini 3.6 Flash through the Google Gemini REST API
 - Replit Connectors SDK for authenticated Gmail delivery
 - Orval for generated OpenAPI client hooks and Zod schemas
 

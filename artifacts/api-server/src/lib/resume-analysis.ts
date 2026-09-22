@@ -5,6 +5,8 @@ import { AnalyzeResumeResponse } from "@workspace/api-zod";
 import { logger } from "./logger";
 
 const MAX_INLINE_PDF_BYTES = 6 * 1024 * 1024;
+const GEMINI_MODEL = "gemini-3.6-flash";
+const GEMINI_MAX_ATTEMPTS = 3;
 const require = createRequire(import.meta.url);
 const pdfParse = require("pdf-parse/lib/pdf-parse.js") as (
   data: Buffer,
@@ -142,27 +144,52 @@ Keep every list specific and actionable. Mention when a recommendation is a sugg
     });
   }
 
-  const response = await fetch(
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": apiKey,
-      },
-      body: JSON.stringify({
-        contents: [{ role: "user", parts }],
-        generationConfig: {
-          response_mime_type: "application/json",
-          temperature: 0.2,
-          max_output_tokens: 8192,
-        },
-      }),
+  const requestBody = JSON.stringify({
+    contents: [{ role: "user", parts }],
+    generationConfig: {
+      response_mime_type: "application/json",
+      temperature: 0.2,
+      max_output_tokens: 8192,
     },
-  );
+  });
+  let response: Response | undefined;
+  let providerError = "";
 
-  if (!response.ok) {
-    logger.error({ status: response.status }, "Gemini analysis request failed");
+  for (let attempt = 1; attempt <= GEMINI_MAX_ATTEMPTS; attempt += 1) {
+    response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": apiKey,
+        },
+        body: requestBody,
+      },
+    );
+
+    if (response.ok) {
+      break;
+    }
+
+    providerError = (await response.text()).slice(0, 500);
+    const isTransient = [429, 500, 502, 503, 504].includes(response.status);
+    if (!isTransient || attempt === GEMINI_MAX_ATTEMPTS) {
+      logger.error(
+        { status: response.status, statusText: response.statusText, providerError },
+        "Gemini analysis request failed",
+      );
+      throw new Error("Gemini analysis failed");
+    }
+
+    logger.warn(
+      { status: response.status, attempt, maxAttempts: GEMINI_MAX_ATTEMPTS },
+      "Gemini analysis request temporarily unavailable; retrying",
+    );
+    await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+  }
+
+  if (!response?.ok) {
     throw new Error("Gemini analysis failed");
   }
 

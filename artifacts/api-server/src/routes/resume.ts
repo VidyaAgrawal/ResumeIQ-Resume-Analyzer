@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import multer from "multer";
 import { createResumeAnalysis } from "../lib/resume-analysis";
+import { logger } from "../lib/logger";
 import { AnalyzeResumeResponse } from "@workspace/api-zod";
 
 const router: IRouter = Router();
@@ -61,6 +62,7 @@ router.post(
       res.json(AnalyzeResumeResponse.parse(result));
     } catch (error) {
       const message = error instanceof Error ? error.message : "";
+      logger.error({ message: message.slice(0, 300) }, "Resume analysis failed");
       const isInputError =
         message.includes("Invalid PDF") ||
         message.includes("InvalidPDF") ||

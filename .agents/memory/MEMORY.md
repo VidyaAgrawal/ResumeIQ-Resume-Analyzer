@@ -1,1 +1,2 @@
 - [Node PDF parsing](pdf-parsing-node.md) — choose a Node-safe parser entrypoint; package roots can trigger browser globals or debug harness side effects.
+- [Gemini model availability](gemini-model-availability.md) — new Gemini API users may receive model-specific 404s even when the endpoint and key are valid.
